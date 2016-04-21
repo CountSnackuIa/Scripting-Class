@@ -115,6 +115,16 @@ public class Music : MonoBehaviour {
 		StartCoroutine ("SyncBassToAudio");
 	}
 
+	public void ResetSquares()
+	{
+		foreach(GameObject item in cubes)
+		{
+			MeshRenderer meshIsActive = item.GetComponent<MeshRenderer>();
+			if(!meshIsActive.enabled)
+				meshIsActive.enabled = !meshIsActive.enabled;
+		}
+	}
+
 	IEnumerator SyncBassToAudio(){
 		for (int k = 0; k < drops.Length; k++){
 			float sampleCalc = drops[k] * musicClip.clip.frequency;
