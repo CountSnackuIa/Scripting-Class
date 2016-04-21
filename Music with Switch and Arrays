@@ -1,0 +1,146 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+
+public class Music : MonoBehaviour {
+
+	public AudioSource musicClip;
+	public AudioClip soundBite;
+	public List<GameObject> cubes;
+	public List<GameObject> speakers;
+//	public List<float> times;
+//	public List<GameObject> buttons;
+	public float[] drops;
+	public float[] times;
+	private int cubeCounter;
+	public int switchController;
+	private float speakerLength;
+
+	void Start()
+	{
+		foreach(GameObject item in speakers)
+		{
+			MeshRenderer meshIsActive = item.GetComponent<MeshRenderer>();
+			meshIsActive.enabled = false;
+		}
+	}
+
+	void OnMouseDown()
+	{
+		if(int.TryParse (gameObject.name, out switchController))
+		{
+			Debug.Log ("success");
+			Debug.Log (soundBite.name);
+		}
+		else
+			Debug.Log ("fail");
+		switch (switchController) 
+		{
+			case 1:
+				Badgers();
+				break;
+			case 2:
+				Babes();
+				break;
+			case 3:
+				Chaumers();
+				break;
+			case 4:
+				Converters();
+				break;
+		}
+
+
+	}
+
+	public void Badgers()
+	{
+		musicClip.clip = soundBite;
+		drops = new float[]{1.043f, 3.128f, 4.979f};
+		times = new float[]{2.235f, 2.476f, 4.093f, 4.314f, 6.12f, 6.263f, 6.465f, 6.843f, 7.201f, 7.579f, 7.847f, 8.114f };
+		speakerLength = 1.199f;
+		musicClip.Play();
+		StartCoroutine ("SyncToAudio");
+		StartCoroutine ("SyncBassToAudio");
+	}
+
+	void Babes()
+	{
+		musicClip.clip = soundBite;
+		times = new float[]{1.057f, 1.264f, 1.402f, 1.805f, 1.883f, 2.086f, 2.212f, 2.424f, 2.653f, 2.885f, 3.018f, 3.282f, 3.811f, 4.081f};
+		drops = new float[]{1.402f, 3.282f};
+		speakerLength = .475f;
+		musicClip.Play();
+		StartCoroutine ("SyncToAudio");
+		StartCoroutine ("SyncBassToAudio");
+	}
+
+	void Chaumers()
+	{
+		musicClip.clip = soundBite;
+		times = new float[]{1.159f, 1.416f, 1.668f, 1.813f, 2.053f, 2.258f, 2.466f, 2.740f};
+		drops = new float[]{2.466f};
+		speakerLength = .741f;
+		musicClip.Play();
+		StartCoroutine ("SyncToAudio");
+		StartCoroutine ("SyncBassToAudio");
+	}
+
+	void Converters()
+	{
+		musicClip.clip = soundBite;
+		times = new float[]{1.177f, 1.285f, 1.387f, 1.487f, 1.683f, 1.733f, 1.783f, 1.966f, 2.121f, 2.265f, 2.387f, 2.453f, 2.583f, 2.628f, 2.819f, 3.151f, 3.331f, 3.5f};
+		drops = new float[]{2.819f, 3.320f};
+		speakerLength = .313f;
+		musicClip.Play();
+		StartCoroutine ("SyncToAudio");
+		StartCoroutine ("SyncBassToAudio");
+	}
+
+	public void Thunderstruck()
+	{
+		speakerLength = .1f;
+		int timesLength = 200;
+		times = new float[timesLength];
+		drops = new float[]{29.856f, 30.314f, 31.253f, 32.145f, 33.037f, 33.470f, 33.928f, 34.844f, 35.735f, 36.651f, 
+			37.109f, 37.519f, 38.410f, 39.326f, 40.217f, 40.699f, 41.133f, 42.049f, 42.940f, 43.832f, 44.314f, 44.748f, 
+			45.639f, 46.531f, 47.47f};
+		for( int i = 0; i < timesLength; i++)
+		{
+			times[i] = (1 + (i * .227f));
+		}
+		musicClip.Play();
+		StartCoroutine ("SyncToAudio");
+		StartCoroutine ("SyncBassToAudio");
+	}
+
+	IEnumerator SyncBassToAudio(){
+		for (int k = 0; k < drops.Length; k++){
+			float sampleCalc = drops[k] * musicClip.clip.frequency;
+			while (musicClip.timeSamples < sampleCalc) yield return 0; // wait till the desired sample
+			foreach(GameObject item in speakers)
+			{
+				MeshRenderer meshIsActive = item.GetComponent<MeshRenderer>();
+				meshIsActive.enabled = !meshIsActive.enabled;
+			}
+			yield return new WaitForSeconds (speakerLength);
+			foreach(GameObject item in speakers)
+			{
+				MeshRenderer meshIsActive = item.GetComponent<MeshRenderer>();
+				meshIsActive.enabled = !meshIsActive.enabled;
+			}
+		}
+	}
+	IEnumerator SyncToAudio(){
+		for (int k = 0; k < times.Length; k++){
+			float sampleCalc = times[k] * musicClip.clip.frequency;
+			while (musicClip.timeSamples < sampleCalc) yield return 0; // wait till the desired sample
+			if (cubeCounter >= cubes.Count)
+				cubeCounter = 0;
+			MeshRenderer meshIsActive = cubes[cubeCounter].GetComponent<MeshRenderer>();
+			meshIsActive.enabled = !meshIsActive.enabled;
+			cubeCounter++;
+		}
+	}
+}
