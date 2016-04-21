@@ -123,6 +123,8 @@ public class Music : MonoBehaviour {
 			if(!meshIsActive.enabled)
 				meshIsActive.enabled = !meshIsActive.enabled;
 		}
+		cubeCounter = 0;
+
 	}
 
 	IEnumerator SyncBassToAudio(){
